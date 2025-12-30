@@ -207,6 +207,7 @@ async function endBattle(caught) {
   // 배틀 종료 후 스탯 리셋 (디버프 해제)
   Game.myTeam.forEach(p => calcStats(p));
 
+  saveGame();
   showScreen('main');
 }
 
@@ -298,7 +299,13 @@ function init() {
     starterList.appendChild(card);
   });
   
-  showScreen('starter');
+  // 저장된 데이터 로드 시도
+  if (loadGame() && Game.myTeam.length > 0) {
+    showScreen('main');
+    updateBagLabels();
+  } else {
+    showScreen('starter');
+  }
 
   $('btn-explore').onclick = startEncounter;
   $('btn-pokedex').onclick = () => showScreen('pokedex');
@@ -333,6 +340,7 @@ function selectStarter(id) {
   const starter = POKEMONS.find(p => p.id === id);
   Game.myTeam.push(createPokemon(starter, 5));
   Game.pokedex.add(id);
+  saveGame();
   showScreen('main');
 }
 
@@ -1054,8 +1062,6 @@ function buyItem(id) {
   const price = item.price;
 
   if (Game.money < price) {
-    // alert 대신 메시지나 시각적 피드백을 주는 것이 좋지만, 
-    // 현재 상점 구조상 alert가 가장 확실함.
     alert('돈이 없잖아! (Not enough money)');
     return;
   }
@@ -1064,9 +1070,47 @@ function buyItem(id) {
   if (!Game.items[id]) Game.items[id] = 0;
   Game.items[id]++;
   
-  // 성공 메시지는 상단 돈 표시 업데이트로 대체하거나 짧은 알림
   updateShopUI();
-  updateBagLabels(); 
+  updateBagLabels();
+  saveGame();
+}
+
+// ========== 저장 시스템 ==========
+function saveGame() {
+  try {
+    const saveData = {
+      myTeam: Game.myTeam,
+      items: Game.items,
+      money: Game.money,
+      pokedex: Array.from(Game.pokedex),
+      centerSlot: Game.centerSlot,
+      version: 1
+    };
+    localStorage.setItem('ishsmon_save', JSON.stringify(saveData));
+  } catch (e) {
+    console.error('Save failed', e);
+  }
+}
+
+function loadGame() {
+  try {
+    const json = localStorage.getItem('ishsmon_save');
+    if (!json) return false;
+    
+    const data = JSON.parse(json);
+    if (data.myTeam && data.myTeam.length > 0) {
+      Game.myTeam = data.myTeam;
+      Game.items = { ...Game.items, ...data.items };
+      Game.money = data.money ?? Game.money;
+      Game.pokedex = new Set(data.pokedex || []);
+      Game.centerSlot = data.centerSlot;
+      return true;
+    }
+    return false;
+  } catch (e) {
+    console.error('Load failed', e);
+    return false;
+  }
 }
 
 init();
