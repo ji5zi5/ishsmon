@@ -97,35 +97,7 @@ body {
 }
 
 /* 모바일 가로모드 스타터 카드 최적화 */
-@media screen and (max-height: 500px) {
-  #starter-screen {
-    gap: 5px;
-    padding: 5px;
-  }
-  #starter-screen h2 {
-    font-size: 14px;
-    margin: 2px 0;
-  }
-  #starter-list {
-    gap: 8px;
-    padding: 2px;
-  }
-  .starter-card {
-    padding: 8px !important;
-    gap: 3px !important;
-    min-width: 100px !important;
-    width: calc(25% - 10px) !important;
-  }
-  .starter-card img {
-    max-height: 60px !important;
-  }
-  .starter-card .name {
-    font-size: 12px !important;
-  }
-  .starter-card .type {
-    font-size: 10px !important;
-  }
-}
+/* 모바일 가로모드 스타터 카드 최적화 제거 (PC와 동일하게 유지) */
 
 .starter-card {
   background: white;
