@@ -41,53 +41,6 @@ body {
   align-items: center;
 }
 
-/* 모바일 세로모드 감지 메시지 */
-#rotate-message {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.95);
-  z-index: 9999;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  font-family: 'DungGeunMo', sans-serif;
-  text-align: center;
-  padding: 20px;
-}
-
-#rotate-message::before {
-  content: '🔄';
-  font-size: 80px;
-  margin-bottom: 20px;
-}
-
-#rotate-message p {
-  font-size: 20px;
-  line-height: 1.6;
-}
-
-/* 모바일 세로모드일 때 회전 메시지 표시 */
-@media screen and (max-width: 768px) and (orientation: portrait) {
-  #rotate-message {
-    display: flex !important;
-  }
-  #game-container {
-    display: none;
-  }
-}
-
-/* 모바일: JS에서 스케일 처리 */
-@media screen and (max-width: 900px) {
-  body {
-    overflow: hidden;
-  }
-}
-
 #game-container {
   position: relative;
   width: min(100vw, 150vh);

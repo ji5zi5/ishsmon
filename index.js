@@ -2,33 +2,6 @@ const $ = id => document.getElementById(id);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-function responsiveScale() {
-  const container = $('game-container');
-  if (!container) return;
-  
-  const isMobile = window.innerWidth <= 900;
-  
-  if (isMobile) {
-    const baseWidth = 900;
-    const baseHeight = 600;
-    const scale = Math.min(window.innerWidth / baseWidth, window.innerHeight / baseHeight);
-    
-    container.style.width = baseWidth + 'px';
-    container.style.height = baseHeight + 'px';
-    container.style.transform = `scale(${scale})`;
-    container.style.transformOrigin = 'center center';
-  } else {
-    container.style.width = '';
-    container.style.height = '';
-    container.style.transform = '';
-    container.style.transformOrigin = '';
-  }
-}
-
-window.addEventListener('resize', responsiveScale);
-window.addEventListener('orientationchange', responsiveScale);
-window.addEventListener('load', responsiveScale);
-
 const TYPES = {
   수학: { strong: ['물리', '화학'], weak: ['영어', '사회'] },
   물리: { strong: ['지구', '화학'], weak: ['수학', '생물'] },
