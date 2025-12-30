@@ -53,8 +53,8 @@ body {
 
 #game-container {
   position: relative;
-  width: 900px;
-  height: 600px;
+  width: min(100vw, 150vh);
+  height: min(66.67vw, 100vh);
   background: linear-gradient(180deg, #88C8E8 0%, #A8E8A8 70%, #78C878 100%);
   overflow: hidden;
   border-image: url('Pokemon5e-styles/images/border-interior.png') 10 round;
@@ -112,7 +112,7 @@ body {
   justify-content: center;
   gap: 15px;
   width: calc(25% - 30px);
-  min-width: 220px;
+  min-width: 180px;
   max-width: 280px;
 }
 
