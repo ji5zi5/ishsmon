@@ -326,18 +326,13 @@ function init() {
   
   $('skill-1').onclick = () => useSkill(0);
   $('skill-2').onclick = () => useSkill(1);
-  $('skill-3').onclick = () => showScreen('starter');
+  $('skill-3').onclick = () => useSkill(2);
 }
 
 function selectStarter(id) {
-  const selected = POKEMONS.find(p => p.id === id);
-  if (!selected) return;
-  const param = createPokemon(selected, 5);
-  Game.myTeam.push(param);
-  Game.pokedex.add(selected.id);
-  
-  saveGame(); // 스타팅 선택 시 저장
-  
+  const starter = POKEMONS.find(p => p.id === id);
+  Game.myTeam.push(createPokemon(starter, 5));
+  Game.pokedex.add(id);
   showScreen('main');
 }
 
@@ -630,7 +625,6 @@ async function handleMyPokemonFaint() {
     await setMessage(`${Game.myTeam[nextAlive].name}, 너로 정했다!`);
     updateBattleUI();
   }
-  saveGame(); // 배틀 종료(도주/패배) 시 저장 (상태 변화 등)
 }
 
 
@@ -698,7 +692,6 @@ async function tryCatch(type = 'pokeball') {
     await sleep(1500);
     $('wild-sprite').style.opacity = '1';
     Game.isProcessing = false;
-    saveGame(); // 포켓몬 획득 시 저장
     endBattle(true);
   } else {
     await setMessage('포획에 실패했다...');
@@ -1073,85 +1066,7 @@ function buyItem(id) {
   
   // 성공 메시지는 상단 돈 표시 업데이트로 대체하거나 짧은 알림
   updateShopUI();
-  updateBagLabels();
-  saveGame(); // 구매 시 저장
-}
-
-// ========== 저장 시스템 ==========
-function saveGame() {
-  const saveData = {
-    myTeam: Game.myTeam,
-    items: Game.items,
-    money: Game.money,
-    pokedex: Array.from(Game.pokedex), // Set -> Array
-    centerSlot: Game.centerSlot,
-    version: 1
-  };
-  localStorage.setItem('ishsmon_save_v1', JSON.stringify(saveData));
-  // console.log('Game Saved');
-}
-
-function loadGame() {
-  const json = localStorage.getItem('ishsmon_save_v1');
-  if (!json) return false;
-  
-  try {
-    const data = JSON.parse(json);
-    
-    // 데이터 복구
-    if (data.myTeam) Game.myTeam = data.myTeam;
-    if (data.items) Game.items = { ...Game.items, ...data.items }; // 새 아이템 호환성 위해 병합
-    if (data.money !== undefined) Game.money = data.money;
-    if (data.pokedex) Game.pokedex = new Set(data.pokedex); // Array -> Set
-    if (data.centerSlot) Game.centerSlot = data.centerSlot;
-    
-    return true;
-  } catch (e) {
-    console.error('Save load failed', e);
-    return false;
-  }
-}
-
-function init() {
-  // 스타팅 화면 구성
-  const starterList = $('starter-list');
-  const starters = [
-    POKEMONS.find(p => p.id === 'injeong'),
-    POKEMONS.find(p => p.id === 'yeonggyo'),
-    POKEMONS.find(p => p.id === 'gyeongmin'),
-    POKEMONS.find(p => p.id === 'hyeonjun')
-  ];
-  
-  if (starterList) {
-    starterList.innerHTML = '';
-    starters.forEach(p => {
-      const card = document.createElement('div');
-      card.className = 'starter-card';
-      card.innerHTML = `
-        <img src="public/${p.id}.png">
-        <h3>${p.name}</h3>
-        <p>타입: ${p.type}</p>
-      `;
-      card.onclick = () => selectStarter(p.id);
-      starterList.appendChild(card);
-    });
-  }
-
-  if (loadGame()) {
-    // 불러오기 성공
-    if (Game.myTeam.length > 0) {
-      // 스타팅 이미 선택했으면 메인으로
-      showScreen('main');
-    } else {
-      // 없으면(오류 등) 스타팅 선택
-      showScreen('starter');
-    }
-  } else {
-    // 저장된 거 없으면 스타팅 선택
-    showScreen('starter');
-  }
-  
-  updateBagLabels(); // 로드된 아이템 수량 반영
+  updateBagLabels(); 
 }
 
 init();
