@@ -1113,6 +1113,30 @@ function loadGame() {
 }
 
 function init() {
+  // 스타팅 화면 구성
+  const starterList = $('starter-list');
+  const starters = [
+    POKEMONS.find(p => p.id === 'injeong'),
+    POKEMONS.find(p => p.id === 'yeonggyo'),
+    POKEMONS.find(p => p.id === 'gyeongmin'),
+    POKEMONS.find(p => p.id === 'hyeonjun')
+  ];
+  
+  if (starterList) {
+    starterList.innerHTML = '';
+    starters.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'starter-card';
+      card.innerHTML = `
+        <img src="public/${p.id}.png">
+        <h3>${p.name}</h3>
+        <p>타입: ${p.type}</p>
+      `;
+      card.onclick = () => selectStarter(p.id);
+      starterList.appendChild(card);
+    });
+  }
+
   if (loadGame()) {
     // 불러오기 성공
     if (Game.myTeam.length > 0) {
