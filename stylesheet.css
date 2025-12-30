@@ -1,0 +1,1662 @@
+@import url('Pokemon5e-styles/styles/fonts/loadfonts.css');
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+@font-face {
+  font-family: 'DungGeunMo';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/DungGeunMo.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'PokemonGB';
+  src: url('PokemonGB.ttf');
+}
+
+:root {
+  --bg-color: #FFFBCE;
+  --fg-color: #58d0d0;
+  --fg-color-dark: hsla(180, 57%, 30%, 1);
+  --fg-color-light: hsla(180, 100%, 50%, 1);
+  --fg-color-half: hsla(180, 57%, 58%, 0.5);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  image-rendering: pixelated;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background: #005173;
+  background-image: url('Pokemon5e-styles/images/pokeball-bg.png');
+  font-family: 'DungGeunMo', 'pokemon_gbregular', 'Press Start 2P', monospace;
+  overflow: hidden;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 모바일 세로모드 감지 메시지 */
+#rotate-message {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  z-index: 9999;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-family: 'DungGeunMo', sans-serif;
+  text-align: center;
+  padding: 20px;
+}
+
+#rotate-message::before {
+  content: '🔄';
+  font-size: 80px;
+  margin-bottom: 20px;
+}
+
+#rotate-message p {
+  font-size: 20px;
+  line-height: 1.6;
+}
+
+/* 모바일 세로모드일 때 회전 메시지 표시 */
+@media screen and (max-width: 768px) and (orientation: portrait) {
+  #rotate-message {
+    display: flex !important;
+  }
+  #game-container {
+    display: none;
+  }
+}
+
+/* 모바일: JS에서 스케일 처리 */
+@media screen and (max-width: 900px) {
+  body {
+    overflow: hidden;
+  }
+}
+
+#game-container {
+  position: relative;
+  width: min(100vw, 150vh);
+  height: min(66.67vw, 100vh);
+  background: linear-gradient(180deg, #88C8E8 0%, #A8E8A8 70%, #78C878 100%);
+  overflow: hidden;
+  border-image: url('Pokemon5e-styles/images/border-interior.png') 10 round;
+  border-width: 10px;
+  border-style: solid;
+  border-radius: 15px;
+}
+
+/* 스타터 선택 화면 */
+#starter-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  gap: 10px;
+  padding: 10px;
+  background: var(--bg-color);
+  background-image: url('Pokemon5e-styles/images/window-stripes-bg.png');
+  overflow-y: auto;
+}
+
+#starter-screen h2 {
+  font-family: 'pokemon_solidnormal', 'DungGeunMo', sans-serif;
+  font-size: clamp(16px, 4vw, 40px);
+  color: #FFCB05;
+  text-shadow: 3px 3px 0 #2B6ACC;
+  text-align: center;
+  margin: 5px 0;
+}
+
+#starter-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  max-width: 100%;
+  width: 100%;
+  padding: 5px;
+}
+
+/* 모바일 가로모드 스타터 카드 최적화 */
+@media screen and (max-height: 500px) {
+  #starter-screen {
+    gap: 5px;
+    padding: 5px;
+  }
+  #starter-screen h2 {
+    font-size: 14px;
+    margin: 2px 0;
+  }
+  #starter-list {
+    gap: 8px;
+    padding: 2px;
+  }
+  .starter-card {
+    padding: 8px !important;
+    gap: 3px !important;
+    min-width: 100px !important;
+    width: calc(25% - 10px) !important;
+  }
+  .starter-card img {
+    max-height: 60px !important;
+  }
+  .starter-card .name {
+    font-size: 12px !important;
+  }
+  .starter-card .type {
+    font-size: 10px !important;
+  }
+}
+
+.starter-card {
+  background: white;
+  border: 6px solid #333;
+  border-radius: 20px;
+  padding: 30px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  width: calc(25% - 30px);
+  min-width: 220px;
+  max-width: 280px;
+}
+
+.starter-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+  border-color: #FFCB05;
+}
+
+.starter-card img {
+  width: 350px;
+  height: 350px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.starter-card h3 {
+  font-size: 32px;
+  color: #333;
+  margin: 0;
+}
+
+.starter-card p {
+  font-size: 20px;
+  color: #666;
+  margin: 0;
+}
+
+.hidden { display: none !important; }
+
+/* 메인 화면 */
+#main-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 30px;
+  padding: 20px;
+  background: var(--bg-color);
+  background-image: url('Pokemon5e-styles/images/window-stripes-bg.png');
+}
+
+#main-screen h1 {
+  font-family: 'pokemon_solidnormal', 'DungGeunMo', sans-serif;
+  font-size: clamp(28px, 7vw, 64px);
+  color: #FFCB05;
+  text-shadow: 4px 4px 0 #2B6ACC, -2px -2px 0 #2B6ACC, 2px -2px 0 #2B6ACC, -2px 2px 0 #2B6ACC;
+  letter-spacing: 0.1em;
+}
+
+#main-buttons {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#main-buttons button {
+  font-family: inherit;
+  font-size: clamp(16px, 3.5vw, 26px);
+  padding: 15px 30px;
+  cursor: pointer;
+  transition: transform 0.1s;
+  border-image: url('Pokemon5e-styles/images/border-control-button.png') 12 round;
+  border-width: 12px;
+  border-style: solid;
+  color: #fff;
+  text-shadow: 2px 2px 0 #000;
+  background: url('Pokemon5e-styles/images/scene-button-bg-normal.png'), linear-gradient(0deg, #80C0D8 40%, #3890D8 40%);
+  background-position: left 70%, center center;
+  background-repeat: repeat-x;
+}
+
+#main-buttons button:hover {
+  transform: scale(1.05);
+  border-image: url('Pokemon5e-styles/images/border-control-button-select.png') 12 round;
+  background: url('Pokemon5e-styles/images/scene-button-bg-select.png'), linear-gradient(0deg, #A8E8F8 40%, #78D0E8 40%);
+}
+
+/* ========== 배틀 화면 - pokemon-battle-master 복제 ========== */
+#battle-screen {
+  width: 100%;
+  height: 100%;
+  font-family: 'PokemonGB', 'DungGeunMo', sans-serif;
+  overflow: hidden;
+}
+
+/* 상단 배틀 영역 70% */
+#battle-top {
+  background-color: rgb(223, 225, 218);
+  height: 70%;
+  width: 100%;
+}
+
+/* 하단 메뉴 영역 30% */
+#battle-bottom {
+  background-color: rgb(64, 64, 80);
+  height: 30%;
+  width: 100%;
+  z-index: 3;
+}
+
+/* 배틀 절반 영역 */
+.battle-half {
+  height: 50%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.battle-left {
+  float: left;
+  width: 50%;
+  height: 100%;
+  position: relative;
+}
+
+.battle-right {
+  margin-left: 50%;
+  width: 50%;
+  height: 100%;
+  position: relative;
+}
+
+/* 타원형 바닥 - 외곽 */
+.oval-outer {
+  position: absolute;
+  width: 85%;
+  height: 30%;
+  background: rgb(200, 200, 176);
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.top-oval {
+  bottom: 0;
+  right: 0;
+}
+
+.bottom-oval {
+  bottom: 5%;
+  left: 0;
+}
+
+/* 타원형 바닥 - 내부 */
+.oval-inner {
+  width: 90%;
+  height: 85%;
+  background: rgb(176, 176, 144);
+  border-radius: 50%;
+  position: relative;
+  top: 8%;
+  left: 5%;
+}
+
+/* 적 포켓몬 스프라이트 */
+#wild-sprite {
+  width: 50%;
+  height: 70%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  position: absolute;
+  right: 20%;
+  bottom: 10%;
+  z-index: 2;
+}
+
+/* 내 포켓몬 스프라이트 */
+#my-sprite {
+  width: 55%;
+  height: 80%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  position: absolute;
+  left: 15%;
+  bottom: 15%;
+  z-index: 2;
+}
+
+/* 상태창 컨테이너 */
+#wild-status-container {
+  position: relative;
+  width: 90%;
+  height: 70%;
+  top: 10%;
+  left: 5%;
+}
+
+#my-status-container {
+  position: relative;
+  width: 95%;
+  height: 65%;
+  top: 35%;
+}
+
+/* 상태창 외곽 (검은 배경) */
+.status-outer {
+  z-index: 3;
+  width: 90%;
+  height: 80%;
+  background: rgb(31, 31, 39);
+  margin-left: 5%;
+  border-bottom-right-radius: 15px;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+/* 상태창 내부 (크림색 배경) */
+.status-inner {
+  z-index: 4;
+  width: 94%;
+  height: 88%;
+  background: rgb(240, 240, 208);
+  position: relative;
+  top: 6%;
+  left: 3%;
+  border-bottom-right-radius: 15px;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 8px;
+  border-bottom-left-radius: 8px;
+  padding: 8px 12px;
+}
+
+
+
+.status-name {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 2.5vmin;
+  margin-bottom: 5px;
+}
+
+.level {
+  font-size: 2vmin;
+}
+
+/* HP 행 */
+.hp-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 35%;
+}
+
+/* HP 라벨 */
+.hp-label {
+  color: rgb(230, 121, 89);
+  font-size: 1.8vmin;
+  width: 18%;
+  text-align: center;
+}
+
+/* HP 바 외곽 */
+.hp-bar-outer {
+  width: 80%;
+  height: 65%;
+  background-color: rgb(64, 64, 80);
+  border-radius: 500px;
+  padding: 2px;
+}
+
+/* HP 바 내부 */
+.hp-bar-inner {
+  width: 100%;
+  height: 100%;
+  background-color: rgb(110, 218, 163);
+  border-radius: 500px;
+  transition: width 0.3s;
+}
+
+/* HP 텍스트 */
+#my-hp-text, #wild-hp-text {
+  font-size: 1.8vmin;
+  text-align: right;
+  margin-top: 3px;
+}
+
+/* EXP 바 */
+.exp-bar-container {
+  position: relative;
+  width: 90%;
+  height: 15%;
+  margin-left: 5%;
+  background-color: rgb(64, 64, 80);
+  border-bottom-right-radius: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.exp-label {
+  color: rgb(240, 208, 0);
+  font-size: 1.5vmin;
+  width: 15%;
+  text-align: center;
+}
+
+.exp-bar {
+  width: 75%;
+  height: 50%;
+  background: url('pokemon-battle-master/images/exp_tile.jpg') repeat-x;
+  background-size: contain;
+  border-radius: 500px;
+}
+#bottom-box {
+  height: 90%;
+  background-color: rgb(207, 81, 50);
+  border-radius: 15px;
+  width: 99%;
+  position: relative;
+  top: 5%;
+  left: 0.5%;
+  z-index: 4;
+}
+
+#bottom-box-inner {
+  height: 90%;
+  background-color: rgb(88, 144, 152);
+  border-radius: 15px;
+  width: 96%;
+  position: relative;
+  top: 5%;
+  left: 2%;
+  z-index: 5;
+  display: flex;
+}
+
+/* 메시지 박스 */
+#message-box {
+  width: 60%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 3%;
+  font-size: 4vmin;
+  text-shadow: 2px 2px 0px #43547A;
+  color: #ECEEED;
+  line-height: 1.4;
+}
+
+/* 메뉴 영역 */
+#menu-area {
+  width: 40%;
+  height: 100%;
+  background-color: white;
+  border-radius: 0 15px 15px 0;
+}
+
+#action-buttons, #skill-buttons, #bag-buttons, #swap-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  width: 100%;
+  height: 100%;
+  padding: 5%;
+  gap: 3%;
+}
+
+/* 가방은 아이템이 많으므로 4행으로 변경 */
+#bag-buttons {
+  grid-template-rows: repeat(4, 1fr);
+  font-size: 2.1vmin; /* 2.2vmin -> 2.1vmin 최적화 */
+  padding: 2%; /* 5% -> 2% 내부 공간 확보 */
+  gap: 5%; /* 2% -> 5% 버튼 간격 대폭 확대 */
+}
+
+#bag-buttons button {
+  padding: 2px; /* 버튼 내 여백 조정 */
+  line-height: 1.1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 0;
+}
+
+#action-buttons button, #skill-buttons button, #bag-buttons button, #swap-buttons button {
+  font-family: 'PokemonGB', 'DungGeunMo', sans-serif;
+  font-size: 3vmin;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  padding: 5%;
+}
+
+#action-buttons button:hover, #skill-buttons button:hover, #bag-buttons button:hover {
+  background: rgba(207, 81, 50, 0.2);
+  border-radius: 5px;
+}
+
+/* 도감 화면 */
+#pokedex-screen, #team-screen, #shop-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #0079C6;
+  background-image: url('Pokemon5e-styles/images/window-stripes-bg.png'),
+    linear-gradient(0deg, rgba(0,120,192,1) 5%, rgba(107,203,198,1) 50%, rgba(0,120,192,1) 95%);
+  z-index: 100;
+}
+
+.screen-layout {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  gap: 10px;
+  padding: 10px;
+}
+
+.screen-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.screen-main h2 {
+  font-family: 'pokemon_solidnormal', 'DungGeunMo', sans-serif;
+  font-size: clamp(18px, 4vw, 28px);
+  color: #FFCB05;
+  text-shadow: 3px 3px 0 #2B6ACC;
+  text-align: center;
+  margin-bottom: 8px;
+  padding: 8px;
+  background: var(--bg-color);
+  border-image: url('Pokemon5e-styles/images/border-header.png') 6 repeat;
+  border-width: 6px;
+  border-style: solid;
+}
+
+.screen-content {
+  display: flex;
+  flex: 1;
+  gap: 15px;
+  overflow: hidden;
+}
+
+#pokedex-list, #team-list, #shop-list {
+  display: grid;
+  gap: 8px;
+  overflow-y: auto;
+  flex: 1;
+  padding: 10px;
+  background: var(--bg-color);
+  border-image: url('Pokemon5e-styles/images/border-interior.png') 10 round;
+  border-width: 10px;
+  border-style: solid;
+  border-radius: 15px;
+  align-content: start;
+}
+
+#pokedex-list {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+#team-list {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+#shop-list {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.preview-panel {
+  flex: 1;
+  max-width: 50%;
+  min-width: 300px;
+  height: 100%;
+  background: var(--bg-color);
+  border-image: url('Pokemon5e-styles/images/border-interior.png') 10 round;
+  border-width: 10px;
+  border-style: solid;
+  border-radius: 15px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 25px;
+  overflow-y: auto;
+}
+
+.preview-panel img {
+  width: 350px;
+  height: 350px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  background: rgba(255,255,255,0.3);
+  border-radius: 15px;
+  padding: 20px;
+}
+
+.preview-panel .preview-info {
+  font-family: 'DungGeunMo', sans-serif;
+  font-size: 18px;
+  color: #333;
+  text-align: center;
+  line-height: 1.8;
+}
+
+.preview-panel .preview-name {
+  font-size: 32px;
+  font-weight: bold;
+  color: #222;
+  margin-bottom: 10px;
+}
+
+.preview-panel .preview-type {
+  display: inline-block;
+  background: #5A5A7A;
+  color: white;
+  padding: 6px 16px;
+  border-radius: 12px;
+  font-size: 16px;
+  margin-bottom: 15px;
+}
+
+.preview-panel .preview-stats {
+  font-size: 15px;
+  text-align: left;
+  width: 100%;
+  line-height: 1.8;
+}
+
+.pokemon-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
+  background: var(--fg-color-half);
+  border: 2px outset var(--fg-color-dark);
+  border-radius: 8px;
+  transition: transform 0.1s, background 0.2s;
+  cursor: pointer;
+}
+
+.pokemon-card:hover {
+  transform: scale(1.05);
+  background: var(--fg-color);
+}
+
+.pokemon-card img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  background: rgba(255,255,255,0.5);
+  border-radius: 50%;
+  border: 2px solid var(--fg-color-dark);
+  padding: 5px;
+}
+
+.pokemon-card.locked {
+  filter: grayscale(100%);
+  opacity: 0.6;
+}
+
+.pokemon-card.locked img {
+  filter: brightness(0);
+}
+
+.pokemon-card p {
+  font-size: clamp(11px, 2vw, 16px);
+  margin-top: 6px;
+  color: var(--fg-color-dark);
+  text-shadow: 1px 1px 0 rgba(255,255,255,0.8);
+  font-weight: bold;
+  text-align: center;
+}
+
+.pokemon-card .type-info {
+  font-size: clamp(9px, 1.5vw, 12px);
+  color: #fff;
+  background: var(--fg-color-dark);
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-top: 4px;
+}
+
+.pokemon-card .hp-info {
+  font-size: clamp(8px, 1.2vw, 10px);
+  color: #333;
+  background: rgba(255,255,255,0.7);
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-top: 4px;
+}
+
+#btn-back-main, #btn-back-main2 {
+  font-family: inherit;
+  font-size: clamp(12px, 2.5vw, 18px);
+  padding: 10px 30px;
+  margin-top: 10px;
+  color: white;
+  cursor: pointer;
+  text-shadow: 2px 2px 0 #000;
+  border-image: url('Pokemon5e-styles/images/border-control-button.png') 12 round;
+  border-width: 12px;
+  border-style: solid;
+  background: url('Pokemon5e-styles/images/scene-button-bg-normal.png'), linear-gradient(0deg, #80C0D8 40%, #3890D8 40%);
+  background-position: left 70%, center center;
+  background-repeat: repeat-x;
+  align-self: center;
+}
+
+#btn-back-main:hover, #btn-back-main2:hover {
+  border-image: url('Pokemon5e-styles/images/border-control-button-select.png') 12 round;
+  background: url('Pokemon5e-styles/images/scene-button-bg-select.png'), linear-gradient(0deg, #A8E8F8 40%, #78D0E8 40%);
+}
+
+/* 애니메이션 */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
+}
+
+.shake {
+  animation: shake 0.3s ease-in-out;
+}
+
+.flash {
+  animation: flash-white 0.3s ease-in-out;
+}
+
+@keyframes pokeball-throw {
+  0% { 
+    transform: translate(0, 0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  50% { 
+    transform: translate(40vw, -20vh) rotate(360deg) scale(1);
+    opacity: 1;
+  }
+  100% { 
+    transform: translate(55vw, -15vh) rotate(720deg) scale(0.8);
+    opacity: 1;
+  }
+}
+
+@keyframes pokeball-wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-20deg); }
+  75% { transform: rotate(20deg); }
+}
+
+@keyframes flash-white {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(3); }
+}
+
+@keyframes bounce-in {
+  0% { transform: scale(0) translateY(-50px); opacity: 0; }
+  60% { transform: scale(1.2) translateY(0); opacity: 1; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+@keyframes damage-flash {
+  0%, 100% { opacity: 1; }
+  25%, 75% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+@keyframes slide-in-left {
+  0% { transform: translateX(-100%); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slide-in-right {
+  0% { transform: translateX(100%); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+/* 스타팅 선택 화면 */
+#starter-screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  background: #f0f0f0;
+  text-align: center;
+}
+
+#starter-list {
+  display: flex;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.starter-card {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  width: 150px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: transform 0.2s;
+  border: 3px solid #ccc;
+}
+
+.starter-card:hover {
+  transform: translateY(-10px);
+  border-color: #ffcc00;
+}
+
+.starter-card img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+}
+
+.starter-card h3 {
+  margin: 10px 0 5px;
+  font-size: 18px;
+}
+
+.shake { animation: shake 0.3s ease-in-out; }
+.damage { animation: damage-flash 0.5s ease-in-out; }
+.bounce-in { animation: bounce-in 0.5s ease-out; }
+.flash { animation: flash-white 0.3s ease-in-out; }
+.slide-left { animation: slide-in-left 0.4s ease-out; }
+.slide-right { animation: slide-in-right 0.4s ease-out; }
+
+#pokeball-anim {
+  position: absolute;
+  bottom: 35%;
+  left: 15%;
+  width: 60px;
+  height: 60px;
+  z-index: 100;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 50%, #fff 0%, #fff 40%, #ff0000 40%, #ff0000 50%, #333 50%, #333 55%, #fff 55%);
+  border-radius: 50%;
+  border: 3px solid #333;
+}
+
+#pokeball-anim.throwing {
+  animation: pokeball-throw 0.8s ease-out forwards;
+}
+
+#pokeball-anim.wiggling {
+  animation: pokeball-wiggle 0.3s ease-in-out 3;
+}
+
+/* Pokemon Center */
+#center-screen {
+  background: url('Pokemon5e-styles/images/blue-dark-bg.png') repeat;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 200;
+  box-sizing: border-box;
+}
+
+.center-content {
+  background: url('Pokemon5e-styles/images/border-textbox-big.png') no-repeat center center;
+  background-size: 100% 100%;
+  width: 80%;
+  max-width: 800px;
+  height: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  gap: 30px;
+  box-sizing: border-box;
+  margin: auto;
+}
+
+.nurse-area {
+  font-size: 24px;
+  text-shadow: 2px 2px 0 #000;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.healing-machine {
+  background: rgba(0,0,0,0.5);
+  border-radius: 20px;
+  padding: 20px;
+  border: 4px solid #fff;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#heal-balls-container {
+  display: flex;
+  gap: 20px;
+  height: 80px;
+  align-items: center;
+}
+
+.heal-ball {
+  width: 60px;
+  height: 60px;
+  background: url('Pokemon5e-styles/images/pokeball-bg.png') no-repeat center center;
+  background-size: contain;
+  filter: grayscale(100%) brightness(50%);
+  transition: all 0.3s;
+}
+
+.heal-ball.on {
+  filter: none;
+  filter: drop-shadow(0 0 10px #ffcc00);
+  transform: scale(1.1);
+}
+
+#center-status-text {
+ font-size: 20px;
+ font-weight: bold;
+ text-shadow: 1px 1px 2px black;
+}
+
+#btn-center-ok {
+  padding: 15px 40px;
+  font-size: 24px;
+  background: #ffcc00;
+  border: 4px solid #cc9900;
+  color: #000;
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+#btn-center-ok:hover {
+  background: #ffff00;
+}
+
+
+
+.left {
+    float: left;
+    width: 50%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+.right {
+    position: absolute; /* float substitute for visual stability */
+    left: 50%;
+    width: 50%;
+    height: 100%;
+}
+
+/* Platforms */
+.ovalOutter {
+    z-index: 1;
+    position: absolute;
+    top: 85%; /* Original value */
+    /* width: 85%; height: 30%; - overridden by specific ovals if needed, but original uses classes */
+    width: 85%;
+    height: 30%;
+    background: rgb(200,200,176);
+    border-radius: 50%;
+    left: 7.5%; /* Centering manually (100-85)/2 */
+}
+.ovalInner {
+    z-index: 2;
+    width: 90%;
+    height: 90%;
+    background: rgb(176,176,144);
+    border-radius: 50%;
+    position: relative;
+    top: 5%;
+    left: 5%;
+}
+
+/* Specific Platform Positions (from styles.css media queries logic or inference) */
+/* Actually styles.css doesn't have .bottom-oval class logic, it just puts them in left/right divs. */
+/* My HTML puts them in specific places. I'll rely on relative positioning within left/right. */
+
+
+/* Status Containers */
+.UpperHealthContainer {
+    width: 450px; /* 고정 너비로 복귀 - %는 깨짐 원인 */
+    max-width: 90%; 
+    height: 120px;
+    z-index: 2;
+    position: relative;
+    top: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.healthContainer {
+    width: 450px; /* 고정 너비 */
+    max-width: 90%;
+    height: 120px;
+    z-index: 2;
+    position: relative;
+    top: 40%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Boxes */
+.rectangleOutter {
+    z-index: 3;
+    width: 100%; /* 부모에 맞춤 */
+    height: 100%;
+    background: rgb(31,31,39);
+    margin-left: 0; /* 중앙 정렬로 인해 0 */
+    border-bottom-right-radius: 20px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    position: relative;
+    box-shadow: 5px 5px 10px rgba(0,0,0,0.5);
+}
+
+/* Enemy box override */
+.UpperHealthContainer .rectangleOutter {
+    margin-left: 0%;
+}
+
+.rectangleInner {
+    z-index: 4;
+    width: 95%;
+    height: 90%;
+    background: rgb(240,240,208);
+    position: relative;
+    top: 5%;
+    left: 2.5%;
+    border-bottom-right-radius: 20px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    padding: 2%;
+    box-sizing: border-box;
+}
+
+/* Helper Lists for Layout */
+.UpperHpContent, .hpContent {
+    list-style: none;
+    width: 90%;
+    height: 90%;
+    position: relative;
+    top: 5%;
+    left: 5%;
+    display: block;
+}
+
+.UpperHpList, .hpList {
+    width: 100%;
+    /* height: 50%; mixed, original has specific heights per list item? 
+       styles.css: .UpperHpList { height: 50% }, .hpList { height: 33% } */
+    display: block;
+    margin-bottom: 5px;
+}
+.UpperHpList { height: 35px; margin-bottom: 5px; } 
+.hpList { height: 35px; margin-bottom: 5px; }
+
+/* Text Styles */
+#wild-name, #my-name {
+    float: left;
+    font-size: 20px;
+    font-weight: bold;
+}
+.level {
+    float: right;
+    text-align: right;
+    font-size: 18px;
+    font-weight: bold;
+}
+.hp-label { /* #hp */
+    color: rgb(230, 121, 89);
+    float: left;
+    width: auto; /* auto width */
+    position: relative; 
+    top: 0;
+    left: 0;
+    margin-right: 10px;
+    font-size: 16px;
+    font-weight: bold;
+}
+#wild-hp-text, #my-hp-text { /* #health */
+    float: right;
+    text-align: right;
+    font-size: 16px;
+    font-weight: bold;
+    width: 100%;
+    margin-top: 5px; /* 간격 확보 */
+}
+
+
+/* HP Bar Complex */
+.hpBar {
+    float: right;
+    width: 80%;
+    height: 70%; /* of the list item height? */
+    min-height: 15px; 
+    background-color: rgb(64,64,80);
+    border-radius: 500px;
+    position: relative;
+}
+.hpBarInner {
+    width: 85%;
+    height: 70%;
+    background-color: rgb(255,255,255);
+    border-radius: 500px;
+    position: relative;
+    top: 15%;
+    left: 13%;
+}
+.hpSlider {
+    width: 100%; /* controlled by JS */
+    height: 70%;
+    background-color: rgb(110,218,163);
+    border-radius: 500px;
+    position: relative;
+    top: 15%;
+    left: 2.5%;
+    transition: width 0.5s;
+}
+
+/* Decorations */
+#rhombus {
+    position: relative;
+    width: 80%;
+    height: 15px;
+    background-color: rgb(64,64,80);
+    transform: skew(-45deg); /* 다시 조정 */
+    margin-left: 10%;
+    top: -10px; /* 위치 조정 */
+    z-index: -1;
+}
+
+.triangleBit {
+    z-index: -1;
+    width: 0;
+    height: 0;
+    position: absolute;
+    right: -10px; /* 우측 끝에 붙이기 */
+    top: auto; 
+    bottom: -15px;
+    border-left: 30px solid transparent; 
+    border-top: 30px solid rgb(64,64,80);
+    background: none; /* 그라데이션 제거 - 모양이 안 맞음 */
+}
+
+.rectangleBit {
+    z-index: -1;
+    width: 90%;
+    height: 30px;
+    position: absolute;
+    right: 0;
+    top: auto;
+    bottom: -20px; /* 위치 조정 */
+    background-color: rgb(64,64,80);
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 10px; /* 둥근 모서리 추가 */
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 15px;
+}
+
+.exp-label {
+    /* .exp */
+    width: 15%;
+    float: left;
+    position: relative;
+    top: 10%;
+    text-align: center;
+    display: inline-block;
+    color: rgb(240,208,0);
+    font-size: 10px;
+}
+
+.exp-bar-mini {
+    /* .innerRectangleBit substitute */
+    width: 75%;
+    height: 40%;
+    background-color: rgb(171,154,84);
+    background-image: url('pokemon-battle-master/images/exp_tile.jpg');
+    background-repeat: repeat-x;
+    background-size: contain;
+    display: inline-block;
+}
+.exp-fill-mini {
+    height: 100%;
+    width: 50%;
+    background-color: #40C0FF;
+    opacity: 0.7;
+}
+.left, .right {
+  width: 50%;
+  height: 100%;
+  position: relative;
+}
+/* Platforms */
+.ovalOutter {
+  position: absolute;
+  width: 60%;
+  height: 20%;
+  background: rgb(200,200,176);
+  border-radius: 50%;
+  bottom: 15%;
+  left: 50%;
+  transform: translateX(-50%) scaleY(0.5); /* 중앙 정렬 및 납작하게 */
+  z-index: 1;
+}
+.ovalInner {
+  width: 90%;
+  height: 90%;
+  background: rgb(176,176,144);
+  border-radius: 50%;
+  position: absolute;
+  top: 5%;
+  left: 5%;
+}
+
+/* Status Boxes */
+.healthContainer {
+  width: 400px; /* 적절한 너비 */
+  max-width: 90%;
+  position: absolute;
+  top: 35%; /* 위치 조정 */
+  right: 5%;
+  left: 50%;
+  transform: translateX(-50%); /* scale 제거 */
+  z-index: 10;
+}
+
+.UpperHealthContainer {
+  width: 400px;
+  max-width: 90%;
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%); /* scale 제거 */
+  z-index: 10;
+}
+
+.rectangleOutter {
+  background: rgb(31,31,39);
+  border-radius: 10px 0 30px 5px;
+  padding: 0 0 4px 4px;
+  width: 100%;
+  position: relative; /* 중요 */
+  box-shadow: 3px 3px 5px rgba(0,0,0,0.3);
+}
+
+.rectangleInner {
+  background: rgb(240,240,208);
+  border-radius: 8px 0 28px 3px;
+  padding: 8px 12px; /* 패딩 축소 */
+  color: black;
+  font-family: 'DungGeunMo', monospace;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.hpContent, .UpperHpContent {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px; /* 간격 대폭 축소 */
+  margin: 0;
+  padding: 0;
+}
+
+.hpList, .UpperHpList {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 18px; /* 폰트 확대 */
+  font-weight: bold;
+  height: 24px; /* 높이 고정으로 안정감 */
+}
+
+.hpBar {
+  width: 140px; /* 바 길이 확대 */
+  height: 14px;
+  background: rgb(64,64,80);
+  border-radius: 10px;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+}
+.hpBarInner {
+  width: 100%;
+  height: 100%;
+  background: white; /* 투명인가? 원본은 hpslider가 바로 있었나? 아니 hpBarInner가 있었음 */
+  border-radius: 8px; /* 근데 원본 CSS엔 배경 흰색? 아니면 투명? 확인 안됨. 흰색으로 추정 */
+  background: transparent;
+}
+.hpSlider {
+  height: 100%;
+  background: rgb(110,218,163);
+  border-radius: 8px;
+  transition: width 0.5s;
+}
+.hp-label {
+  color: #ff5500;
+  font-size: 14px; /* 라벨 확대 */
+  margin-right: 5px;
+  font-weight: bold;
+}
+
+/* Decorations */
+#rhombus {
+  width: 80%;
+  height: 15px;
+  background: rgb(64,64,80);
+  transform: skew(-45deg);
+  margin-left: 10%;
+  margin-top: -5px;
+  z-index: -1;
+  position: relative;
+}
+
+.triangleBit {
+  width: 0; 
+  height: 0; 
+  border-left: 30px solid transparent; 
+  border-top: 30px solid rgb(64,64,80); 
+  position: absolute;
+  right: -2px; /* 위치 미세 조정 */
+  bottom: -20px; /* 위치 조정 */
+  z-index: -1;
+}
+
+.rectangleBit {
+  width: 90%;
+  height: 25px;
+  background: rgb(64,64,80);
+  position: absolute;
+  right: 0;
+  bottom: -22px; /* 위치 조정 */
+  border-radius: 0 0 10px 10px;
+  z-index: -2;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 15px;
+}
+.exp-label {
+  color: rgb(240,208,0);
+  font-size: 10px;
+  margin-right: 5px;
+}
+.exp-bar-mini {
+  width: 70%;
+  height: 6px;
+  background: #333;
+  border: 1px solid #555;
+}
+.exp-fill-mini {
+  height: 100%;
+  background: #40C0FF;
+  width: 0%;
+}
+
+/* ========== Pokemon5e Theme & Center V2 ========== */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+:root {
+  --p5e-bg: #FFFBCE;
+  --p5e-accent: #58d0d0;
+  --p5e-blue: #0078C0;
+  --p5e-text: #4b4a44;
+  --p5e-border: 4px solid #484860;
+}
+
+.center-content.p5e-theme {
+    background-color: var(--p5e-bg);
+    color: var(--p5e-text);
+    font-family: 'Press Start 2P', monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    border: 10px solid #d4d0a0;
+    box-shadow: inset 0 0 50px rgba(0,0,0,0.1);
+}
+
+.healing-machine-v2 {
+    background: #f0f0e0;
+    border: var(--p5e-border);
+    border-radius: 10px;
+    padding: 20px;
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 10px 10px 0px rgba(0,0,0,0.2);
+}
+
+.capsule-v2 {
+    width: 200px;
+    height: 200px;
+    background: #a0d0f0;
+    border: 4px solid #fff;
+    border-radius: 50%; /* 원형 유지 */
+    box-shadow: inset 5px 5px 10px rgba(0,0,0,0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.capsule-v2.healing {
+    animation: pulse-bg 2s infinite alternate;
+}
+
+@keyframes pulse-bg {
+    from { background: #a0d0f0; box-shadow: 0 0 10px #a0d0f0; }
+    to { background: #58d0d0; box-shadow: 0 0 30px #58d0d0; }
+}
+
+.pixel-btn {
+    background: var(--p5e-blue);
+    color: white;
+    border: 4px solid #004890;
+    padding: 10px 20px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 10px;
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.3);
+}
+
+.pixel-btn:hover {
+    background: #0090ff;
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px rgba(0,0,0,0.3);
+}
+
+.pixel-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0px 0px 0px rgba(0,0,0,0.3);
+}
+
+.pixel-btn.close {
+    background: #ff5555;
+    border-color: #aa0000;
+}
+
+.status-text-v2 {
+    margin-top: 15px;
+    font-size: 12px;
+    line-height: 1.5;
+    text-align: center;
+    background: white;
+    padding: 10px;
+    border: 2px solid #ccc;
+    width: 100%;
+}
+
+.mini-party-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.party-slot-btn {
+    background: white;
+    border: 2px solid #888;
+    padding: 5px;
+    font-size: 10px;
+    cursor: pointer;
+    font-family: 'Press Start 2P', monospace;
+}
+.party-slot-btn:hover {
+    background: #eee;
+    border-color: var(--p5e-blue);
+}
+
+.floating-pokemon-v2 {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    image-rendering: pixelated;
+    transition: filter 0.3s;
+}
+
+/* 전투 효과: 반짝임 */
+.flash {
+    animation: flash-anim 0.2s 2 alternate;
+}
+@keyframes flash-anim {
+    from { opacity: 1; filter: brightness(1); }
+    to { opacity: 0; filter: brightness(10); }
+}
+
+@keyframes float-v2 {
+    0% { transform: translateY(0px) rotate(-5deg); }
+    50% { transform: translateY(-10px) rotate(5deg); }
+    100% { transform: translateY(0px) rotate(-5deg); }
+}
+
+/* ========== 상점 V2 (Pokemon5e Style) ========== */
+/* ========== 상점 V2 (Pokemon5e Style - Integrated) ========== */
+/* 기존 별도 스타일 제거됨. 공통 스타일 사용 */
+
+#shop-preview {
+  overflow: hidden; 
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* 중앙 정렬로 변경하여 위로 올림 */
+  align-items: center;
+  padding-bottom: 20px;
+}
+
+#shop-professor-img {
+  background: none !important;
+  border: none !important;
+  width: auto;
+  max-width: 90%;
+  height: 55%; /* 크기 약간 더 축소 */
+  object-fit: contain;
+  margin-bottom: 20px; /* 텍스트와 간격 */
+}
+
+/* 상점 나가기 버튼 스타일 (도감 나가기 버튼과 통일) */
+#btn-shop-close {
+  width: 100%;
+  font-family: inherit;
+  font-size: 18px;
+  padding: 15px 0;
+  margin-top: 10px;
+  color: white;
+  cursor: pointer;
+  text-shadow: 2px 2px 0 #000;
+  border-image: url('Pokemon5e-styles/images/border-control-button.png') 12 round;
+  border-width: 12px;
+  border-style: solid;
+  background: url('Pokemon5e-styles/images/scene-button-bg-normal.png'), linear-gradient(0deg, #80C0D8 40%, #3890D8 40%);
+  background-position: left 70%, center center;
+  background-repeat: repeat-x;
+}
+#btn-shop-close:hover {
+  border-image: url('Pokemon5e-styles/images/border-control-button-select.png') 12 round;
+  background: url('Pokemon5e-styles/images/scene-button-bg-select.png'), linear-gradient(0deg, #A8E8F8 40%, #78D0E8 40%);
+}
+
+/* 포켓몬 센터 치료 완료 메시지 UI */
+#center-message-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 20px 40px;
+    border: 4px solid #fff;
+    border-radius: 10px;
+    font-family: 'DungGeunMo', monospace;
+    font-size: 24px;
+    text-align: center;
+    z-index: 300;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+#center-message-overlay.show {
+    opacity: 1;
+}
+
+

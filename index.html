@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>ISHSMon Go</title>
+  <link rel="stylesheet" href="stylesheet.css">
+</head>
+<body>
+  <!-- 모바일 세로모드 회전 안내 -->
+  <div id="rotate-message">
+    <p>화면을 가로로 회전해 주세요<br>Please rotate your device to landscape mode</p>
+  </div>
+  
+  <div id="game-container">
+    <!-- 스타팅 선택 화면 -->
+    <div id="starter-screen">
+      <h2>파트너를 선택하세요!</h2>
+      <div id="starter-list">
+        <!-- JS로 생성 -->
+      </div>
+    </div>
+
+    <!-- 메인 화면 -->
+    <div id="main-screen">
+      <h1>ISHSMon Go</h1>
+      <div id="main-buttons">
+        <button id="btn-explore">탐험하기</button>
+        <button id="btn-pokedex">도감</button>
+        <button id="btn-team">내 포켓몬</button>
+        <button id="btn-shop">상점</button>
+        <button id="btn-center">포켓몬 센터</button>
+      </div>
+    </div>
+
+    <!-- 배틀 화면 - pokemon-battle-master 구조 -->
+    <div id="battle-screen" class="hidden">
+      <!-- 상단 배틀 영역 70% -->
+      <!-- 상단 배틀 영역 70% -->
+      <div id="battle-top">
+        <!-- 상단 절반: 적 상태창(좌) + 적 포켓몬(우) -->
+        <div class="battle-half">
+          <div class="battle-left">
+            <div id="wild-status-container">
+              <div class="status-outer">
+                <div class="status-inner">
+                  <div class="status-name">
+                    <span id="wild-name">야생 ???</span>
+                    <span id="wild-lv-text" class="level">Lv.25</span>
+                  </div>
+                  <div class="hp-row">
+                    <span class="hp-label">HP</span>
+                    <div class="hp-bar-outer">
+                      <div id="wild-hp-fill" class="hp-bar-inner"></div>
+                    </div>
+                  </div>
+                  <div id="wild-hp-text"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <div class="battle-right">
+            <div class="oval-outer top-oval">
+              <div class="oval-inner"></div>
+            </div>
+            <div id="wild-sprite"></div>
+          </div>
+        </div>
+        <!-- 하단 절반: 내 포켓몬(좌) + 내 상태창(우) -->
+        <div class="battle-half">
+          <div class="battle-left">
+            <div id="my-sprite"></div>
+            <div class="oval-outer bottom-oval">
+              <div class="oval-inner"></div>
+            </div>
+          </div>
+          <div class="battle-right">
+            <div id="my-status-container">
+              <div class="status-outer">
+                <div class="status-inner">
+                  <div class="status-name">
+                    <span id="my-name">???</span>
+                    <span id="my-lv-text" class="level">Lv.25</span>
+                  </div>
+                  <div class="hp-row">
+                    <span class="hp-label">HP</span>
+                    <div class="hp-bar-outer">
+                      <div id="my-hp-fill" class="hp-bar-inner"></div>
+                    </div>
+                  </div>
+                  <div id="my-hp-text">180/180</div>
+                </div>
+              </div>
+              <div class="exp-bar-container">
+                <span class="exp-label">EXP</span>
+                <div class="exp-bar">
+                  <div id="my-exp-fill" class="exp-fill"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- 하단 메뉴 영역 30% -->
+      <div id="battle-bottom">
+        <div id="bottom-box">
+          <div id="bottom-box-inner">
+            <div id="message-box">야생 포켓몬이 나타났다!</div>
+            <div id="menu-area">
+              <div id="action-buttons">
+                <button id="btn-fight">싸우다</button>
+                <button id="btn-bag">가방</button>
+                <button id="btn-pokemon">포켓몬</button>
+                <button id="btn-run">도망치다</button>
+              </div>
+              <div id="skill-buttons" class="hidden">
+                <button id="skill-1">스킬1</button>
+                <button id="skill-2">스킬2</button>
+                <button id="skill-3">스킬3</button>
+                <button id="btn-back">뒤로</button>
+              </div>
+              <div id="bag-buttons" class="hidden">
+                <button id="btn-use-pokeball">몬스터볼 (x10)</button>
+                <button id="btn-use-greatball">슈퍼볼 (x0)</button>
+                <button id="btn-use-ultraball">하이퍼볼 (x0)</button>
+                <button id="btn-use-potion">상처약 (x5)</button>
+                <button id="btn-use-superpotion">좋은상처약 (x0)</button>
+                <button id="btn-use-revive">기력의조각 (x3)</button>
+                <button id="btn-back2">뒤로</button>
+              </div>
+              <div id="swap-buttons" class="hidden"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <img id="pokeball-anim" src="Pokemon5e-styles/images/pokeball-bg.png" class="hidden" alt="pokeball">
+    </div>
+    </div>
+
+    <!-- 도감 화면 -->
+    <div id="pokedex-screen" class="hidden">
+      <div class="screen-layout">
+        <div id="pokedex-preview" class="preview-panel">
+          <img id="pokedex-preview-img" src="" alt="">
+          <div id="pokedex-preview-info"></div>
+        </div>
+        <div class="screen-main">
+          <h2>포켓몬 도감</h2>
+          <div id="pokedex-list"></div>
+          <button id="btn-back-main">돌아가기</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 포켓몬 센터 화면 -->
+    <div id="center-screen" class="hidden">
+      <!-- UI 메시지 오버레이 -->
+      <div id="center-message-overlay">당신의 포켓몬이 회복되었습니다!</div>
+      
+      <div class="screen-layout">
+        <div id="center-machine-container" class="center-content p5e-theme">
+           <!-- JS에서 동적 생성됨 -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 상점 화면 -->
+    <div id="shop-screen" class="hidden">
+      <div class="screen-layout">
+        <div id="shop-preview" class="preview-panel">
+           <img src="오박사.png" alt="오박사" id="shop-professor-img">
+           <div class="preview-info">
+             <div class="preview-name">상점</div>
+             <p>어서 오게!<br>무엇이 필요한가?</p>
+           </div>
+        </div>
+        <div class="screen-main">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h2 style="margin: 0; padding: 0; background: none; border: none; text-shadow: none; color: #FFCB05; text-shadow: 3px 3px 0 #2B6ACC;">상점 아이템</h2>
+            <div id="shop-money-display" style="font-family: 'DungGeunMo'; font-size: 24px; color: #FFCB05; text-shadow: 2px 2px 0 #000; background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 20px; border: 2px solid #fff;">0원</div>
+          </div>
+          <div id="shop-list"></div>
+          <button id="btn-shop-close">나가기</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 내 포켓몬 화면 -->
+    <div id="team-screen" class="hidden">
+      <div class="screen-layout">
+        <div id="team-preview" class="preview-panel">
+          <img id="team-preview-img" src="" alt="">
+          <div id="team-preview-info"></div>
+        </div>
+        <div class="screen-main">
+          <h2>내 포켓몬</h2>
+          <div id="team-list"></div>
+          <button id="btn-back-main2">돌아가기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="index.js?v=fixed2"></script>
+</body>
+</html>
