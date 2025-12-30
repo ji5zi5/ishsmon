@@ -96,7 +96,8 @@ const Game = {
   money: 1000,
   centerSlot: null, 
   pokedex: new Set(),
-  inBattle: false
+  inBattle: false,
+  isProcessing: false
 };
 
 
@@ -482,7 +483,8 @@ function getTypeEffectiveness(skillType, defenderType) {
 }
 
 async function useSkill(index) {
-  if (!Game.inBattle) return;
+  if (!Game.inBattle || Game.isProcessing) return;
+  Game.isProcessing = true;
   hideAllMenus();
   
   const my = Game.myTeam[Game.activePokemon];
@@ -500,11 +502,12 @@ async function useSkill(index) {
     await doEnemyAttack();
     if (my.currentHp > 0) {
       await doAttack(my, wild, skill, 'wild-sprite');
-      await finishTurn(false); // 적 턴은 이미 수행했으므로 메뉴만 복구
+      await finishTurn(false);
     } else {
-      await finishTurn(false); // 내가 죽었어도 메뉴 복구 시도 (handleMyPokemonFaint에서 endBattle 호출 가능)
+      await finishTurn(false);
     }
   }
+  Game.isProcessing = false;
 }
 
 async function doAttack(attacker, defender, skill, targetImg) {
@@ -627,7 +630,7 @@ async function handleMyPokemonFaint() {
 
 
 async function tryCatch(type = 'pokeball') {
-  if (!Game.inBattle) return;
+  if (!Game.inBattle || Game.isProcessing) return;
   
   if (Game.items[type] <= 0) {
     const names = { pokeball:'몬스터볼', greatball:'슈퍼볼', ultraball:'하이퍼볼' };
@@ -635,17 +638,13 @@ async function tryCatch(type = 'pokeball') {
     return;
   }
   
-  // 메뉴 숨김
+  Game.isProcessing = true;
   hideAllMenus();
   
   Game.items[type]--;
-  updateBagLabels(); // 즉시 UI 갱신
+  updateBagLabels();
   
   const pokeball = $('pokeball-anim');
-  
-  // 볼 이미지 변경 (이미지 파일이 있다면 교체, 없으면 기본 사용)
-  // 현재는 pokeball-bg.png 하나만 쓰므로 색상 변경 효과 등을 줄 수 있으나 일단 기본 애니메이션 사용
-  // (필요 시 CSS filter로 색상 변경 가능)
   
   pokeball.classList.remove('hidden', 'throwing', 'wiggling');
   pokeball.style.opacity = '1';
@@ -662,7 +661,6 @@ async function tryCatch(type = 'pokeball') {
   await sleep(300);
   $('wild-sprite').classList.remove('flash');
   
-  // 포획률 공식 수정 (볼 보정 추가)
   const M = Game.wild.maxHp;
   const H = Game.wild.currentHp;
   const C = Game.wild.catchRate || 100;
@@ -681,13 +679,11 @@ async function tryCatch(type = 'pokeball') {
     $('wild-sprite').style.opacity = '0';
     await setMessage(`${Game.wild.name}을(를) 잡았다!`);
     
-    // 포획 보상 (본가 트레이너 배틀 기준: 레벨 * 20 정도)
     const rewardMoney = Game.wild.level * 20;
     Game.money += rewardMoney;
     await setMessage(`${rewardMoney}원을 얻었다!`);
     await sleep(1000);
     
-    // 야생 포켓몬의 레벨과 경험치 유지
     const captured = createPokemon(POKEMONS.find(p => p.id === Game.wild.id), Game.wild.level);
     captured.exp = Game.wild.exp || Math.pow(Game.wild.level, 3);
     
@@ -695,15 +691,18 @@ async function tryCatch(type = 'pokeball') {
     Game.pokedex.add(Game.wild.id);
     await sleep(1500);
     $('wild-sprite').style.opacity = '1';
+    Game.isProcessing = false;
     endBattle(true);
   } else {
     await setMessage('포획에 실패했다...');
     await sleep(1000);
     await finishTurn();
+    Game.isProcessing = false;
   }
 }
 
 async function usePotion() {
+  if (Game.isProcessing) return;
   if (Game.items.potion <= 0) {
     setMessage('상처약이 없다!');
     return;
@@ -715,6 +714,7 @@ async function usePotion() {
     return;
   }
   
+  Game.isProcessing = true;
   hideAllMenus();
   Game.items.potion--;
   updateBagLabels();
@@ -724,10 +724,11 @@ async function usePotion() {
   
   await sleep(500);
   await finishTurn();
+  Game.isProcessing = false;
 }
 
 async function useSuperPotion() {
-  if (!Game.inBattle) return;
+  if (!Game.inBattle || Game.isProcessing) return;
   
   if (Game.items.superpotion <= 0) {
     setMessage('좋은상처약이 없다!');
@@ -740,20 +741,21 @@ async function useSuperPotion() {
     return;
   }
   
+  Game.isProcessing = true;
   hideAllMenus();
   Game.items.superpotion--;
   updateBagLabels();
-  my.currentHp = Math.min(my.maxHp, my.currentHp + 50); // 좋은상처약 회복량 50 (4세대 기준)
+  my.currentHp = Math.min(my.maxHp, my.currentHp + 50);
   updateBattleUI();
   await setMessage(`${my.name}의 HP가 50 회복되었다!`);
   
-  // 회복 효과음/이펙트 추가 가능
   $('my-sprite').classList.add('flash');
   await sleep(500);
   $('my-sprite').classList.remove('flash');
   
   await sleep(500);
   await finishTurn();
+  Game.isProcessing = false;
 }
 
 function showReviveSelect() {
