@@ -835,11 +835,28 @@ function renderPokedex() {
     const card = document.createElement('div');
     const unlocked = Game.pokedex.has(p.id);
     card.className = 'pokemon-card' + (unlocked ? '' : ' locked');
-    card.innerHTML = `
-      <img src="public/${p.id}.png" alt="${p.name}">
-      <p>${unlocked ? p.name : '???'}</p>
-      <span class="type-info">${unlocked ? p.type : '???'}</span>
-    `;
+    
+    // 이미지 생성 (실루엣 처리 + 우클릭 차단)
+    const img = document.createElement('img');
+    img.src = `public/${p.id}.png`;
+    img.alt = unlocked ? p.name : '???';
+    img.draggable = false;
+    img.oncontextmenu = () => false; // 우클릭 차단
+    if (!unlocked) {
+      img.style.filter = 'brightness(0)'; // 검은 실루엣
+    }
+    
+    const nameP = document.createElement('p');
+    nameP.textContent = unlocked ? p.name : '???';
+    
+    const typeSpan = document.createElement('span');
+    typeSpan.className = 'type-info';
+    typeSpan.textContent = unlocked ? p.type : '???';
+    
+    card.appendChild(img);
+    card.appendChild(nameP);
+    card.appendChild(typeSpan);
+    
     if (unlocked) {
       card.onclick = () => showPokedexPreview(p);
       if (!firstUnlocked) firstUnlocked = p;
