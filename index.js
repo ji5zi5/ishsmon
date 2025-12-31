@@ -2,6 +2,26 @@ const $ = id => document.getElementById(id);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
+// ========== 오디오 시스템 ==========
+let bgmStarted = false;
+function playBGM() {
+  if (bgmStarted) return;
+  const bgm = $('bgm');
+  if (bgm) {
+    bgm.volume = 0.3;
+    bgm.play().catch(() => {});
+    bgmStarted = true;
+  }
+}
+function playSFX(id) {
+  const sfx = $(id);
+  if (sfx) {
+    sfx.currentTime = 0;
+    sfx.volume = 0.5;
+    sfx.play().catch(() => {});
+  }
+}
+
 const TYPES = {
   수학: { strong: ['물리', '화학'], weak: ['영어', '사회'] },
   물리: { strong: ['지구', '화학'], weak: ['수학', '생물'] },
@@ -341,6 +361,7 @@ function selectStarter(id) {
   Game.myTeam.push(createPokemon(starter, 5));
   Game.pokedex.add(id);
   saveGame();
+  playBGM(); // 배경음악 시작
   showScreen('main');
 }
 
@@ -555,6 +576,7 @@ async function doAttack(attacker, defender, skill, targetImg) {
   
   const damage = calcDamage(attacker, defender, skill);
   await setMessage(`${attacker.name}의 ${skill.name}!`);
+  playSFX('sfx-hit'); // 공격 효과음
   $(targetImg).classList.add('shake');
   await sleep(500);
   $(targetImg).classList.remove('shake');
