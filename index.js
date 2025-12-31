@@ -21,6 +21,11 @@ function playSFX(id) {
     sfx.play().catch(() => {});
   }
 }
+// 첫 클릭 시 BGM 시작 (브라우저 오디오 정책 대응)
+document.addEventListener('click', function startBGMOnce() {
+  playBGM();
+  document.removeEventListener('click', startBGMOnce);
+}, { once: true });
 
 const TYPES = {
   수학: { strong: ['물리', '화학'], weak: ['영어', '사회'] },
