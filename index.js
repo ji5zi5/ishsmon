@@ -17,7 +17,7 @@ function playSFX(id) {
   const sfx = $(id);
   if (sfx) {
     sfx.currentTime = 0;
-    sfx.volume = 0.8;
+    sfx.volume = 1.0;
     sfx.play().catch(() => {});
   }
 }
